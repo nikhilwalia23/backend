@@ -7,13 +7,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 32,
-        trim: true
     },
     email :
     {
-        type: email,
-        maxlength: 32,
+        type: String,
         unique: true,
+        required : true
     },
     number : 
     {
@@ -30,7 +29,7 @@ const userSchema = new mongoose.Schema({
     },
     address : 
     {
-        tyep: String,
+        type: String,
         maxlength: 75
     },
     encry_password :
@@ -42,10 +41,7 @@ const userSchema = new mongoose.Schema({
     {
         type : String,
     },
-    works_array :
-    {
-        type: Array,
-    }
+    Packages_taken : [{ type : ObjectId, ref: 'Packages' }]
 });
 //Virtual Methods Set Up and Salt value and Encrypt the password before Saving into the Database
 userSchema.virtual("password").set(function(password)
@@ -89,19 +85,19 @@ const workerSchema = mongoose.Schema({
     {
         type: String,
         required: true,
-        maxlength: 32,
+        // maxlength: 32,
         trim: true
     },
     email :
     {
-        type: email,
-        maxlength: 32,
+        type: String,
+        // maxlength: 32,
         unique: true,
     },
     number : 
     {
         type: String,
-        maxlength: 10,
+        // maxlength: 10,
         required: true,
         unique: true,
         trim: true
@@ -114,7 +110,7 @@ const workerSchema = mongoose.Schema({
     address : 
     {
         tyep: String,
-        maxlength: 75
+        // maxlength: 75
     },
     encry_password :
     {

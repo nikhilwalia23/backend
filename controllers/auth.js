@@ -79,6 +79,7 @@ var isLogin = (req,res,next) =>
 }
 var welcome = (req,res) =>
 {
+    
     res.send("Welcome "+req.body.name);
 }
 module.exports = {singUp,login,isLogin,welcome};

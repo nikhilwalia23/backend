@@ -20,6 +20,17 @@ const Packages_Schema = mongoose.Schema({
     package_desription : 
     {
         type : String
+    },
+    services : 
+    {
+        type : Array,
+        default: []
+    },
+    member : 
+    {
+        type : Number,
+        default : 1
     }
 });
-module.exports = mongoose.model("Packages",Packages_Schema);
+const Packages = mongoose.model("Packages",Packages_Schema);
+module.exports = {Packages};

@@ -23,6 +23,11 @@ const transectionSchema = mongoose.Schema({
     member : 
     {
         type : Number
+    },
+    name : 
+    {
+        type : String,
+        require: true
     }
 });
 const Transecions = mongoose.model("Transection",transectionSchema);

@@ -7,7 +7,7 @@ var mongoose = require("mongoose");
 var cors = require('cors');
 
 const userRoutes = require('./routes/user');
-
+const packaeRoutes = require('./routes/package');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,7 +22,7 @@ app.use(cors());
 
 //Imports Routes From all Files
 app.use("/api",userRoutes);
-
+app.use("/api",packaeRoutes);
 
 //Start Web APP
 app.listen(port, () => {

@@ -1,6 +1,5 @@
-const {Packages} =require('../models/packages');
-const {Transecions} = require('../models/transections');
 const {User} = require('../models/users');
+const {Caller_query} = require('../models/caller_query');
 let getUser = (req,res) => 
 {
     const email=req.params.UserId;
@@ -24,35 +23,52 @@ let getUser = (req,res) =>
         }
     });
 }
-let buyPackage = (req,res) => 
+let updateUser = (req,res) => 
 {
-    const {id,Package,member} = req.body;
-    const user=id;
-    const payment_status = false;
-    Packages.findById(Package, (err,Pack) => 
+    const email=req.params.UserId;
+    User.findOne({'email':email}, (err,user) => 
     {
         if(err)
         {
-            return res.status(404).json({"error": "Package Unavailable"});
+            return res.status(400).json({err});
         }
         else
         {
-            let cost = Pack.price;
-            cost=cost*member;
-            const tr = new Transecions({user,Package,member,cost});
-            tr.save((err,trans) => 
+            if(!user)
+            {
+                return res.status(400).json({"err":"User Does not exisit"});
+            }
+            if(req.body.name)
+            {
+                user.name=req.body.name;
+            }
+            user.save((err,user) => 
             {
                 if(err)
                 {
-                    return res.status(400).json({"error":"Not able to Save"});
+                    return res.status(400).json({err});
                 }
                 else
                 {
-                    return res.status(200).json(trans);
+                    return res.status(200).json({"message":"Deatisl Updated Successfully"});
                 }
-            })
-           
+            });
         }
     });
 }
-module.exports = {getUser,buyPackage};
+let book_call = (req,res) =>
+{
+    const {id,status,start,end} = req.body;
+    const user=id;
+    const caller = new Caller_query({user,status,start,end});
+    caller.save((err,cal) => 
+    {
+        console.log(start);
+        if(err)
+        {
+            return res.status(440).json({"err":err});
+        }
+        return res.start(200).json(cal);
+    });
+}
+module.exports = {getUser,updateUser,book_call};

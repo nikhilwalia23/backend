@@ -8,11 +8,11 @@ var singUp = (req,res) =>
     {
         if(err)
         {
-            return res.json({"error":"Action Failed"}).status(400);
+            return res.status(400).json({"error":"Action Failed"}).status(400);
         }
         else
         {
-            return res.json({"message":"User Account Created"}).status(200);
+            return res.status(400).json({"message":"User Account Created"}).status(200);
         }
     });
 }
@@ -77,9 +77,31 @@ var isLogin = (req,res,next) =>
         }
     });
 }
+var isEmploye = (req,res,next) => 
+{
+    const id = req.body.id;
+    User.findById(id,(err,user) => 
+    {
+        if(err)
+        {
+            return res.status(400).json(err);
+        }
+        else
+        {
+            if(user.role==1)
+            {
+                next();
+            }
+            else
+            {
+                return res.status(403).json({"error":"You are not eligible for this operation"});
+            }
+        }
+    });
+}
 var welcome = (req,res) =>
 {
     
     res.send("Welcome "+req.body.name);
 }
-module.exports = {singUp,login,isLogin,welcome};
+module.exports = {singUp,login,isLogin,welcome,isEmploye};

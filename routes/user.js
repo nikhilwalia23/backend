@@ -9,5 +9,5 @@ router.get("/welcome",isLogin,welcome);
 router.get("/user/:UserId",getUser);
 router.put("/user/:UserId",isLogin,updateUser);
 router.get("/package/showpackage",isLogin,showPackages);
-router.post("/package/buypackage",isLogin,buyPackage)
+router.post("/package/buypackage",isLogin,buyPackage);
 module.exports=router;

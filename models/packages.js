@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+var ObjectId=mongoose.ObjectId;
 const Packages_Schema = mongoose.Schema({
     package_name : 
     {
@@ -30,6 +31,11 @@ const Packages_Schema = mongoose.Schema({
     {
         type : Number,
         default : 1
+    },
+    employe: 
+    {
+        type: ObjectId,
+        ref: "User"
     }
 });
 const Packages = mongoose.model("Packages",Packages_Schema);

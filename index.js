@@ -8,7 +8,8 @@ var cors = require('cors');
 
 const userRoutes = require('./routes/user');
 const packaeRoutes = require('./routes/package');
-
+const empolyeRoutes = require('./routes/employe');
+const { home } = require('./controllers');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -21,8 +22,10 @@ app.use(cors());
 
 
 //Imports Routes From all Files
+app.get("/api",home);
 app.use("/api",userRoutes);
 app.use("/api",packaeRoutes);
+app.use("/api",empolyeRoutes);
 
 //Start Web APP
 app.listen(port, () => {

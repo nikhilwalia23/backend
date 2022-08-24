@@ -36,7 +36,7 @@ var login =(req,res) =>
             const id=user._id;
             if(user.authenticate(ps))
             {
-                jwt.sign({id},'0xa5b2d60f32436310afebcfda832817a68921beb782fabf7915cc0460b443116aet',(err,token) =>
+                jwt.sign({id},process.env.HASHING_KEY,(err,token) =>
                 {
                     if(err)
                     {
@@ -44,7 +44,8 @@ var login =(req,res) =>
                     }
                     else
                     {
-                        return res.status(200).json({id,name,role,token});
+                        res.cookie("token",token,{path:"http://localhost:3001/api/", httpOnly:true})
+                        return res.status(200).json({id,name,role});
                     }
                 });
             }
@@ -57,8 +58,12 @@ var login =(req,res) =>
 }
 var isLogin = (req,res,next) =>
 {
-    const token=req.body.token;
-    jwt.verify(token,'0xa5b2d60f32436310afebcfda832817a68921beb782fabf7915cc0460b443116aet',(err,curr) => 
+    if(req.cookies['token']==undefined)
+    {
+        return res.status(400).json({"error":"Token must be provided"});
+    }
+    const token=req.cookies['token'];
+    jwt.verify(token,process.env.HASHING_KEY,(err,curr) => 
     {
         if(err)
         {
@@ -102,6 +107,6 @@ var isEmploye = (req,res,next) =>
 var welcome = (req,res) =>
 {
     
-    res.send("Welcome "+req.body.name);
+    res.send("you are logged in");
 }
 module.exports = {singUp,login,isLogin,welcome,isEmploye};

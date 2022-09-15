@@ -44,7 +44,7 @@ var login =(req,res) =>
                     }
                     else
                     {
-                        res.cookie("token",token,{path:"http://localhost:3001/api/", httpOnly:true})
+                        res.cookie("token",token,{path:["http://localhost:3001/api/","https://touristbackend.herokuapp.com/api"], httpOnly:true})
                         return res.status(200).json({id,name,role});
                     }
                 });

@@ -1,6 +1,17 @@
 const {Packages} = require('../models/packages');
 const {Transecions} = require('../models/transections');
 const {User} = require('../models/users')
+let showAllPackages = (req,res) => 
+{
+    Packages.find({published:true}).sort({'date':'-1'}).limit(10).exec((err,packs)=>
+    {
+        if(err)
+        {
+            return res.status(400).json({"error":"Internal Server Problem"});
+        }
+        return res.status(200).json(packs);
+    });
+}
 let buyPackage = (req,res) => 
 {
     const {id,Package,member,name} = req.body;
@@ -104,4 +115,4 @@ let updatePackage = (req,res) =>
         }
     });
 }
-module.exports = {buyPackage,showPackages};
+module.exports = {buyPackage,showPackages,showAllPackages};

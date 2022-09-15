@@ -16,11 +16,15 @@ const updatePackage = (req,res) =>
 }
 const delPackage = (req,res) => 
 {
-    const {id} = req.body.package_id;
-    Packages.deleteOne(id,(err,pack) => 
+    const id = req.body.package_id;
+    Packages.findByIdAndDelete(id,(err,pack) => 
     {
-        if(err){return res.status(400).json(err);}
-        return res.status(200).json({"msg":"Packgae removed sucessfully"});
+        if(err){return res.status(400).json({"error":"Package does not exist"});}
+        if(pack){res.status(200).json({"msg":"Packgae removed sucessfully"});}
+        else
+        {
+            return res.status(400).json({"error":"Package does not exist"});
+        }
     });
 }
 module.exports = {addPackage,updatePackage,delPackage};

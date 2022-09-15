@@ -10,6 +10,7 @@ const home = (req,res) =>
         "buy_packages": "/package/buypackage",
         "add_package":"/package/add",
         "delete_package":"/package/del",
+        "reset_Password":"/user/forgetpassword",
         "documentation" : "Comming Soon"
     }
     return res.status(200).json(data);

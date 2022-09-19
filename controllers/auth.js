@@ -1,6 +1,7 @@
 const { User } = require("../models/users");
 const jwt = require("jsonwebtoken")
 const sgMail = require('@sendgrid/mail');
+const { use } = require("../routes/user");
 var singUp = (req, res) => {
     //Check Before Creating User
     const user = new User(req.body);
@@ -93,26 +94,72 @@ let forgetPassword = (req, res) => {
         }
         else {
             sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-            const msg = {
-                to: email,
-                from: process.env.EMAIL_FROM, // Use the email address or domain you verified above
-                subject: 'Reset Password',
-                text: 'working fine now send resetlink',
-                html: '<strong>working reset fom page</strong>',
-            };
-
-            sgMail
-                .send(msg)
-                .then(() => { return res.status(200).json({"message":"working fine"});}, error => {
-                    console.error(error);
-
-                    if (error.response) {
-                        console.error(error.response.body)
+            let url = String(process.env.CLIENT_URL);
+            const id = String(user._id);
+            jwt.sign({ id }, process.env.HASHING_KEY, (err, token) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).json(err);
+                }
+                else {
+                    url = url + '/' + token;
+                    console.log(url);
+                    const msg = {
+                        to: email,
+                        from: process.env.EMAIL_FROM, // Use the email address or domain you verified above
+                        subject: 'Reset Password',
+                        text: 'nothing showing',
+                        html: `<strong>Click on Link to Change Passowrd</strong> <a href=${url}>Click Me</a>`,
+                    };
+                    user.resetString = token;
+                    user.save().then( doc => {
+                        sgMail
+                            .send(msg)
+                            .then(() => { user.resetString = token; return res.status(200).json({ "message": "working fine" }); }, error => {
+                                console.error(error);
+                                if (error.response) {
+                                    return res.status(400).json(error.response.body);
+                                }
+                            })
                     }
-                });
-
+                    );
+                }
+            });
         }
     });
 }
-module.exports = { singUp, login, isLogin, welcome, isEmploye, forgetPassword };
+let ressetPassword = (req, res) => {
+    const { password, token } = req.body;
+    if(!token)
+    {
+        return res.status(401).json({"error":"Invalid Token"});
+    }
+    jwt.verify(token,process.env.HASHING_KEY,(err,decoded) => 
+    {
+        if(err)
+        {
+            return res.status(400).json({"error":"Invalid Token"});
+        }
+        else
+        {
+            const id = decoded.id;
+            User.findById(id,(err,user) => 
+            {
+                if(err || !user || user.resetString!=token)
+                {
+                    return res.status(400).json({"error":"Token Expired"});
+                }
+                else
+                {
+                    user.password=password;
+                    user.save((usr) => 
+                    {
+                        return res.status(200).json({"msg":"Password Updated"});
+                    });
+                }
+            });
+            // return res.status(200).json(decoded);
+        }
+    });
+}
+module.exports = { singUp, login, isLogin, welcome, isEmploye, forgetPassword, ressetPassword};

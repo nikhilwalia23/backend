@@ -41,7 +41,12 @@ const userSchema = new mongoose.Schema({
     {
         type : String,
     },
-    Packages_taken : [{ type : ObjectId, ref: 'Transection' }]
+    Packages_taken : [{ type : ObjectId, ref: 'Transection' }],
+    resetString: 
+    {
+        type: String,
+        default:""
+    }
 });
 //Virtual Methods Set Up and Salt value and Encrypt the password before Saving into the Database
 userSchema.virtual("password").set(function(password)

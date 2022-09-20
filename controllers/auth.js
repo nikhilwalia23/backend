@@ -7,7 +7,7 @@ var singUp = (req, res) => {
     const user = new User(req.body);
     user.save((err, user) => {
         if (err) {
-            return res.status(400).json({ "error": "Action Failed" }).status(400);
+            return res.status(400).json({ "error": "Action Failed" });
         }
         else {
             return res.status(200).json({ "message": "User Account Created" }).status(200);
@@ -33,7 +33,7 @@ var login = (req, res) => {
                         return res.status(404).json({ "error": "Unable To login" });
                     }
                     else {
-                        res.cookie("token", token, { path: ["http://localhost:3001/api/", "https://touristbackend.herokuapp.com/api"], httpOnly: true })
+                        res.cookie("token", token, { path: ["http://localhost:3000", "https://touristbackend.herokuapp.com/api"], httpOnly: true })
                         return res.status(200).json({ id, name, role });
                     }
                 });

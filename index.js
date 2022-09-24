@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_ADDRESS).then(res => console.log("Database Co
 //MidleWare Stuff
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],credentials: true}));
+app.use(cors({origin: ['http://localhost:3000', 'http://127.0.0.1:3000','https://app.netlify.com/sites/relaxed-alfajores-1445cf/deploys/632ecce7fbe18d55c48fa6af'],credentials: true}));
 
 
 //Imports Routes From all Files

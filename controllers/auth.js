@@ -33,7 +33,7 @@ var login = (req, res) => {
                         return res.status(404).json({ "error": "Unable To login" });
                     }
                     else {
-                        res.cookie("token", token, { path: ["http://localhost:3000/", "https://touristbackend.herokuapp.com/api"], httpOnly: true })
+                        res.cookie("token", token, { path: ["http://localhost:3000/", "https://touristbackend.herokuapp.com/api"], httpOnly: true, sameSite: 'none' })
                         return res.status(200).json({ id, name, role });
                     }
                 });

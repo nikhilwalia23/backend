@@ -42,18 +42,18 @@ let buyPackage = (req,res) =>
                     {
                         if(err)
                         {
-                            return res.status(400).json({"error":"Internal Server Error0"});
+                            return res.status(500).json({"error":"Internal Server Error"});
                         }
                         if(!user)
                         {
-                            return res.status(400).json({"error":"User Not Found"});
+                            return res.status(4500).json({"error":"User Not Found"});
                         }
                         user.Packages_taken.push(trans._id);
                         user.save((err,user) => 
                         {
                             if(err || !user)
                             {
-                                return res.status(400).json({"error":"Internal Server Error1"});
+                                return res.status(500).json({"error":"Internal Server Error1"});
                             }
                             return res.status(200).json(tr);
                         })

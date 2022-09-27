@@ -9,6 +9,7 @@ var cors = require('cors');
 const userRoutes = require('./routes/user');
 const packaeRoutes = require('./routes/package');
 const empolyeRoutes = require('./routes/employe');
+const paymentRoutes = require('./routes/payment');
 const { home } = require('./controllers');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.get("/api",home);
 app.use("/api",userRoutes);
 app.use("/api",packaeRoutes);
 app.use("/api",empolyeRoutes);
+app.use("/api",paymentRoutes);
 
 //Start Web APP
 app.listen(port, () => {

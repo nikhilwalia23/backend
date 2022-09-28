@@ -28,6 +28,11 @@ const transectionSchema = mongoose.Schema({
     {
         type : String,
         require: true
+    },
+    paymentId: 
+    {
+        type: String,
+        default: ""
     }
 });
 const Transecions = mongoose.model("Transection",transectionSchema);

@@ -25,8 +25,6 @@ let createOrder = (req, res) => {
 function verifyOrder(req, res) {
     //Do Vefication update states paid in transeciton
     let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
-
-    var crypto = require("crypto");
     var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
         .update(body.toString())
         .digest('hex');
@@ -57,6 +55,10 @@ function verifyOrder(req, res) {
                 });
             }
         });
+    }
+    else
+    {
+        return res.status(500).json({"error":"bhag bsdk","signatureIsValid": "false"});
     }
 
 }

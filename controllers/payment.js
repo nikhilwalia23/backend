@@ -1,5 +1,6 @@
 let Razorpay = require("razorpay");
 var crypto = require("crypto");
+var { Transecions } = require("../models/transections")
 let instance = new Razorpay({ key_id: process.env.RAZOR_PAY_ID, key_secret: process.env.RAZOR_PAY_KEY });
 
 let createOrder = (req, res) => {
@@ -21,7 +22,7 @@ let createOrder = (req, res) => {
         }
     });
 }
-let verifyOrder = (req, res) => {
+function verifyOrder(req, res) {
     //Do Vefication update states paid in transeciton
     let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
 
@@ -31,10 +32,32 @@ let verifyOrder = (req, res) => {
         .digest('hex');
     console.log("sig received ", req.body.response.razorpay_signature);
     console.log("sig generated ", expectedSignature);
-    var response = { "signatureIsValid": "false" }
     if (expectedSignature === req.body.response.razorpay_signature)
-        response = { "signatureIsValid": "true" }
-    return res.status(200).json(response);
+    {
+        instance.orders.fetch(req.body.response.razorpay_order_id,(error,order) => 
+        {
+            var response = { "signatureIsValid": "true" }
+            if(error)
+            {
+                return res.status(500).json({"error":"Internal Server Error","signatureIsValid": "false"});
+            }
+            else
+            {
+                Transecions.findByIdAndUpdate(order.receipt,{paymentId:req.body.response.razorpay_payment_id,payment_status:true},(err,trans) => 
+                {
+                    if(err)
+                    {
+                        return res.status(500).json(err);
+                    }
+                    if(!trans)
+                    {
+                        return res.status(404).json({"error":"Transection Not Found","signatureIsValid": "false"});
+                    }
+                    return res.status(200).json(response);
+                });
+            }
+        });
+    }
 
 }
 module.exports = { createOrder, verifyOrder };

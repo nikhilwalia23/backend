@@ -33,16 +33,16 @@ function verifyOrder(req, res) {
             return res.status(404).json({ "error": "payment id not found" });
         }
         else {
-            req.body.response.razorpay_order_id = pay.order_id;
             console.log(pay);
-            let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
+            let body = pay.order_id + "|" + req.body.response.razorpay_payment_id;
             var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
                 .update(body.toString())
                 .digest('hex');
             console.log("sig received ", req.body.response.razorpay_signature);
             console.log("sig generated ", expectedSignature);
             if (expectedSignature === req.body.response.razorpay_signature) {
-                instance.orders.fetch(req.body.response.razorpay_order_id, (error, order) => {
+                console.log(pay.order_id);
+                instance.orders.fetch(pay.order_id, (error, order) => {
                     var response = { "signatureIsValid": "true" }
                     if (error) {
                         return res.status(500).json({ "error": "Internal Server Error", "signatureIsValid": "false" });

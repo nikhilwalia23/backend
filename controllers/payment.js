@@ -24,42 +24,47 @@ let createOrder = (req, res) => {
 }
 function verifyOrder(req, res) {
     //Do Vefication update states paid in transeciton
-    let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
-    var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
-        .update(body.toString())
-        .digest('hex');
-    console.log("sig received ", req.body.response.razorpay_signature);
-    console.log("sig generated ", expectedSignature);
-    if (expectedSignature === req.body.response.razorpay_signature)
-    {
-        instance.orders.fetch(req.body.response.razorpay_order_id,(error,order) => 
-        {
-            var response = { "signatureIsValid": "true" }
-            if(error)
-            {
-                return res.status(500).json({"error":"Internal Server Error","signatureIsValid": "false"});
-            }
-            else
-            {
-                Transecions.findByIdAndUpdate(order.receipt,{paymentId:req.body.response.razorpay_payment_id,payment_status:true},(err,trans) => 
-                {
-                    if(err)
-                    {
-                        return res.status(500).json(err);
+    //geting orderid from paymentid (because orderId is not send by webhook post reqest)
+    instance.payments.edit(req.body.response.razorpay_payment_id,{"notes": {
+		"key1": "value1",
+		"key2": "value2"
+	}}, (err, pay) => {
+        if (err) {
+            return res.status(404).json({ "error": "payment id not found" });
+        }
+        else {
+            req.body.response.razorpay_order_id = pay.order_id;
+            console.log(pay);
+            let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
+            var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
+                .update(body.toString())
+                .digest('hex');
+            console.log("sig received ", req.body.response.razorpay_signature);
+            console.log("sig generated ", expectedSignature);
+            if (expectedSignature === req.body.response.razorpay_signature) {
+                instance.orders.fetch(req.body.response.razorpay_order_id, (error, order) => {
+                    var response = { "signatureIsValid": "true" }
+                    if (error) {
+                        return res.status(500).json({ "error": "Internal Server Error", "signatureIsValid": "false" });
                     }
-                    if(!trans)
-                    {
-                        return res.status(404).json({"error":"Transection Not Found","signatureIsValid": "false"});
+                    else {
+                        Transecions.findByIdAndUpdate(order.receipt, { paymentId: req.body.response.razorpay_payment_id, payment_status: true }, (err, trans) => {
+                            if (err) {
+                                return res.status(500).json(err);
+                            }
+                            if (!trans) {
+                                return res.status(404).json({ "error": "Transection Not Found", "signatureIsValid": "false" });
+                            }
+                            return res.status(200).json(response);
+                        });
                     }
-                    return res.status(200).json(response);
                 });
             }
-        });
-    }
-    else
-    {
-        return res.status(500).json({"error":"bhag bsdk","signatureIsValid": "false"});
-    }
+            else {
+                return res.status(500).json({ "error": "bhag bsdk", "signatureIsValid": "false" });
+            }
+        }
+    });
 
 }
 module.exports = { createOrder, verifyOrder };

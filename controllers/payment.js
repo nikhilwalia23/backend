@@ -23,9 +23,25 @@ let createOrder = (req, res) => {
     });
 }
 function verifyOrder(req, res) {
-    //Do Vefication update states paid in transeciton
-    //geting orderid from paymentid (because orderId is not send by webhook post reqest)
-    instance.payments.edit(req.body.response.razorpay_payment_id,{"notes": {
+    //Do Verification update states paid in transeciton
+
+    //Verifiaction by Client
+    let razrosign = req.body.razorpaySignature;
+    let paymentid = req.body.paymentId;
+
+
+
+
+    //vefification by Webhook (Workion on it)
+    // console.log(req.body.payload.payment);
+    // let razrosign=req.rawHeaders[19];
+    // let paymentid=req.body.payload.payment.entity.id;
+    // let orderid=req.body.payload.payment.entity.order_id;
+    // console.log("paymentid :-   " + paymentid);
+    // console.log("orderid :-    "+ orderid);
+    // console.log(razrosign);
+
+    instance.payments.edit(paymentid,{"notes": {
 		"key1": "value1",
 		"key2": "value2"
 	}}, (err, pay) => {
@@ -34,13 +50,13 @@ function verifyOrder(req, res) {
         }
         else {
             console.log(pay);
-            let body = pay.order_id + "|" + req.body.response.razorpay_payment_id;
+            let body = pay.order_id + "|" + paymentid;
             var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
                 .update(body.toString())
                 .digest('hex');
-            console.log("sig received ", req.body.response.razorpay_signature);
+            console.log("sig received ", razrosign);
             console.log("sig generated ", expectedSignature);
-            if (expectedSignature === req.body.response.razorpay_signature) {
+            if (expectedSignature === razrosign) {
                 console.log(pay.order_id);
                 instance.orders.fetch(pay.order_id, (error, order) => {
                     var response = { "signatureIsValid": "true" }
@@ -48,7 +64,7 @@ function verifyOrder(req, res) {
                         return res.status(500).json({ "error": "Internal Server Error", "signatureIsValid": "false" });
                     }
                     else {
-                        Transecions.findByIdAndUpdate(order.receipt, { paymentId: req.body.response.razorpay_payment_id, payment_status: true }, (err, trans) => {
+                        Transecions.findByIdAndUpdate(order.receipt, { paymentId: paymentid, payment_status: true }, (err, trans) => {
                             if (err) {
                                 return res.status(500).json(err);
                             }

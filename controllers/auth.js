@@ -1,7 +1,6 @@
 const { User } = require("../models/users");
 const jwt = require("jsonwebtoken")
 const sgMail = require('@sendgrid/mail');
-const { use } = require("../routes/user");
 var singUp = (req, res) => {
     //Check Before Creating User
     const user = new User(req.body);
@@ -25,7 +24,7 @@ var login = (req, res) => {
             return res.status(404).json({ "error": "User Does not Account" });
         }
         else {
-            const { name, number, role } = user;
+            const { name, number, role} = user;
             const id = user._id;
             if (user.authenticate(ps)) {
                 jwt.sign({ id }, process.env.HASHING_KEY, (err, token) => {
@@ -34,7 +33,7 @@ var login = (req, res) => {
                     }
                     else {
                         res.cookie("token", token, { path: ["http://localhost:3000/", "https://touristbackend.herokuapp.com/api"], httpOnly: true, sameSite: 'none', secure: true})
-                        return res.status(200).json({ id, name, role });
+                        return res.status(200).json({ id, name, role,email ,number});
                     }
                 });
             }

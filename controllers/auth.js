@@ -102,7 +102,6 @@ let forgetPassword = (req, res) => {
                 }
                 else {
                     url = url + '/' + token;
-                    console.log(url);
                     const msg = {
                         to: email,
                         from: process.env.EMAIL_FROM, // Use the email address or domain you verified above

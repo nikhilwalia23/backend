@@ -8,7 +8,7 @@ router.post("/login",login);
 router.get("/welcome",isLogin,welcome);
 router.get("/user/:UserId",getUser);
 router.put("/user/:UserId",isLogin,updateUser);
-router.get("/package/showpackage",isLogin,showPackages);
+router.post("/package/showpackage",isLogin,showPackages);
 router.post("/package/buypackage",isLogin,buyPackage);
 router.post("/user/forgetpassword",forgetPassword);
 router.post("/user/resetpassword",ressetPassword);

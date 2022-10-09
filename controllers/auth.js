@@ -101,7 +101,7 @@ let forgetPassword = (req, res) => {
                     return res.status(400).json(err);
                 }
                 else {
-                    url = url + '/resetform/' + token;
+                    url = url + '/resetForm/' + token;
                     console.log(url);
                     const msg = {
                         to: email,

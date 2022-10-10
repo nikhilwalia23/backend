@@ -12,7 +12,7 @@ const empolyeRoutes = require('./routes/employe');
 const paymentRoutes = require('./routes/payment');
 const { home } = require('./controllers');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 mongoose.connect(process.env.MONGO_ADDRESS).then(res => console.log("Database Connected")).
   catch(err => console.log(err));

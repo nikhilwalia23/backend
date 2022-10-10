@@ -26,20 +26,20 @@ function verifyOrder(req, res) {
     //Do Verification update states paid in transeciton
 
     //Verifiaction by Client
-    let razrosign = req.body.razorpaySignature;
-    let paymentid = req.body.paymentId;
+    // let razrosign = req.body.razorpaySignature;
+    // let paymentid = req.body.paymentId;
 
 
 
 
     //vefification by Webhook (Workion on it)
-    // console.log(req.body.payload.payment);
-    // let razrosign=req.rawHeaders[19];
-    // let paymentid=req.body.payload.payment.entity.id;
-    // let orderid=req.body.payload.payment.entity.order_id;
-    // console.log("paymentid :-   " + paymentid);
-    // console.log("orderid :-    "+ orderid);
-    // console.log(razrosign);
+    console.log(req.body.payload.payment);
+    let razrosign=req.rawHeaders[19];
+    let paymentid=req.body.payload.payment.entity.id;
+    let orderid=req.body.payload.payment.entity.order_id;
+    console.log("paymentid :-   " + paymentid);
+    console.log("orderid :-    "+ orderid);
+    console.log(razrosign);
 
     instance.payments.edit(paymentid,{"notes": {
 		"key1": "value1",
@@ -50,14 +50,13 @@ function verifyOrder(req, res) {
         }
         else {
             console.log(pay);
-            let body = pay.order_id + "|" + paymentid;
+            let body = req.body;
             var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
-                .update(body.toString())
+                .update(JSON.stringify(body))
                 .digest('hex');
-            console.log("sig received ", razrosign);
-            console.log("sig generated ", expectedSignature);
+            // console.log("sig received ", razrosign);
+            // console.log("sig generated ", expectedSignature);
             if (expectedSignature === razrosign) {
-                console.log(pay.order_id);
                 instance.orders.fetch(pay.order_id, (error, order) => {
                     var response = { "signatureIsValid": "true" }
                     if (error) {
@@ -68,10 +67,10 @@ function verifyOrder(req, res) {
                             if (err) {
                                 return res.status(500).json(err);
                             }
-                            if (!trans) {
+                            else if (!trans) {
                                 return res.status(404).json({ "error": "Transection Not Found", "signatureIsValid": "false" });
                             }
-                            return res.status(200).json(response);
+                            else{return res.status(200).json(response);}
                         });
                     }
                 });

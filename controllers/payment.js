@@ -34,7 +34,7 @@ function verifyOrder(req, res) {
 
     //vefification by Webhook (Workion on it)
     console.log(req.body.payload.payment);
-    let razrosign=req.rawHeaders[19];
+    let razrosign=req.headers['x-razorpay-signature'];
     let paymentid=req.body.payload.payment.entity.id;
     let orderid=req.body.payload.payment.entity.order_id;
     console.log("paymentid :-   " + paymentid);

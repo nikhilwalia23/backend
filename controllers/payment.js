@@ -49,13 +49,12 @@ function verifyOrder(req, res) {
             return res.status(404).json({ "error": "payment id not found" });
         }
         else {
-            console.log(pay);
             let body = req.body;
             var expectedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY)
                 .update(JSON.stringify(body))
                 .digest('hex');
-            // console.log("sig received ", razrosign);
-            // console.log("sig generated ", expectedSignature);
+            console.log("sig received ", razrosign);
+            console.log("sig generated ", expectedSignature);
             if (expectedSignature === razrosign) {
                 instance.orders.fetch(pay.order_id, (error, order) => {
                     var response = { "signatureIsValid": "true" }

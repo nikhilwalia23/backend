@@ -36,6 +36,10 @@ const Packages_Schema = mongoose.Schema({
     {
         type: ObjectId,
         ref: "User"
+    },
+    famousFor:
+    {
+        type: String
     }
 });
 const Packages = mongoose.model("Packages",Packages_Schema);

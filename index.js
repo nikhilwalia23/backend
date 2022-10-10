@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGO_ADDRESS).then(res => console.log("Database Co
 //MidleWare Stuff
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({origin: ['http://localhost:3000', 'http://127.0.0.1:3000','https://relaxed-alfajores-1445cf.netlify.app','https://api.razorpay.com'],credentials: true}));
+app.use(cors({origin: ['http://localhost:3000', 'http://127.0.0.1:3000','https://relaxed-alfajores-1445cf.netlify.app','https://api.razorpay.com','https://astounding-tulumba-302b52.netlify.app'],credentials: true}));
 
 
 //Imports Routes From all Files

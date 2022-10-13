@@ -67,7 +67,7 @@ let buyPackage = (req,res) =>
 let showPackages = (req,res) => 
 {
     const id = req.body.id;
-    User.findById(id,'name').populate('Packages_taken','name').exec((err,temp) => 
+    User.findById(id,'name').populate('Packages_taken').exec((err,temp) => 
     {
         if(err)
         {
